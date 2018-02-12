@@ -1,0 +1,207 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>The HTML5 Herald</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+
+
+
+  <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+  <![endif]-->
+  <style>\
+    #userWord{
+      background-color: red;
+    }
+
+    #newGame{
+      width: 200px;
+      margin: 0 auto;
+      height: 50px;
+      color: black;
+      font-weight: bold;
+      font-size: 20px;
+      text-shadow: 2px 2px #ff0000;
+      text-shadow: small;
+      background-color: green;
+      border: solid 2px red;
+      border-radius: 10px;
+
+    }
+    #newGame:hover{
+      background-color:red;
+    }
+  </style>
+</head>
+
+<body>
+    <div>
+
+
+    <canvas id="canvas" width="600" height="400">
+    </canvas>
+    </div>
+
+    <h1 style="margin-bottom: 0px; padding-bottom: 0px">Hang Man</h1>
+    <br>
+    <h3 style="margin-top: 0px; padding-top: 0px">Ezra Jesalva</h3>
+    <div id="blanks"></div>
+    <input type="text" id="userWord" value="type in word"/>
+    <input type="button" value="submit word" id="submitWord"/>
+    <div class="clear"></div>
+    <a style="text-align: center; background-color: red; margin-left: 650px " onclick="newGame()">
+      <input type="button" value="New Game" id="newGame"/>
+    </a>
+  <script type="text/javascript">
+
+  var countWrong = 0;
+  var myWords  = ['hello','babytek','headphone'];
+
+  var drawWordBlanks = function(correctWord){
+    var wordLength = correctWord.length;
+    var returnBlanks = '';
+    for(var i=0; i<wordLength;i++){
+      returnBlanks += ' _ ';
+
+    }
+    document.getElementById('blanks').innerHTML = '<p>' + returnBlanks + '</p>';
+    alert('blanks ' + document.getElementById('blanks').innerHTML);
+  }
+
+  var getNewWord = function(){
+    var randomNum  = Math.floor(Math.random() * Math.floor(3)); //0-2
+
+    return myWords[randomNum];
+  }
+  var gameOver  = function(){
+    document.getElementById('canvas').style.backgroundColor = 'red';
+  }
+
+  var gameWin = function(){
+    document.getElementById('canvas').style.backgroundColor = 'green';
+
+  }
+  var createHead = function(ctx){
+    ctx.beginPath();
+    ctx.arc(200,100,15,0,2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+
+  }
+  var createBody = function(ctx){
+    ctx.moveTo(200,100);
+    ctx.lineTo(200,200);
+    ctx.stroke();
+  }
+  var createLeftArm = function(ctx){
+    ctx.moveTo(200,150);
+    ctx.lineTo(180,180);
+    ctx.stroke();
+  }
+  var createRightArm = function(ctx){
+    ctx.moveTo(200,150);
+    ctx.lineTo(220,180);
+    ctx.stroke();
+  }
+  var createLeftLeg = function(ctx){
+    ctx.moveTo(200,200);
+    ctx.lineTo(190,250);
+    ctx.stroke();
+  }
+  var createRightLeg = function(ctx){
+    ctx.moveTo(200,200);
+    ctx.lineTo(210,250);
+    ctx.stroke();
+  }
+  var createPost = function(ctx){
+    ctx.beginPath();
+    ctx.moveTo(300,300);
+    ctx.lineTo(300,75);
+    ctx.lineTo(200,75);
+    ctx.lineTo(200,80);
+    ctx.moveTo(300,300); //begin post legs
+
+    ctx.lineTo(280,350);
+    ctx.moveTo(300,300);
+    ctx.lineTo(320,350)
+    ctx.stroke();
+  }
+  var validateCorrectWord = function(ctx,correctWord){
+    var userWord  = document.getElementById("userWord"); //future use make sure userWord.value
+    alert('userWord ' + userWord.value);
+    if(userWord.value === correctWord){
+      alert('correct!');
+      gameWin();
+
+    } else{
+      alert('false');
+      alert('countWrong ' + countWrong);
+      switch(countWrong){
+        case 0:       createHead(ctx);
+          break;
+        case 1:       createBody(ctx);
+          break;
+        case 2:       createLeftArm(ctx)
+          break;
+        case 3:       createRightArm(ctx);
+          break;
+        case 4:       createLeftLeg(ctx);
+          break;
+        case 5:       createRightLeg(ctx);
+                      gameOver();
+          break;
+        default:
+          alert('error!');
+          break;
+      }
+      console.log('countWrong++');
+      countWrong++;
+      alert('countWrong after incrementor ' + countWrong);
+    }
+  }
+
+  var newGame = function(){ //game loop
+    alert('new game');
+
+
+    if(canvas && canvas.getContext){
+
+
+      var correct = false;
+      ctx  = canvas.getContext('2d');
+      var correctWord = getNewWord();
+
+      document.getElementById("submitWord").addEventListener("click", function(){ //listen for sendWord buttonclick
+        alert('listener activated');
+        alert('countWrong outside  validate: ' + countWrong);
+        validateCorrectWord(ctx,correctWord);
+        });
+
+      alert(correctWord);
+      drawWordBlanks(correctWord);
+      //when user gets wrong
+      createPost(ctx);
+
+
+
+
+    }
+    alert('outside eventlisterner');
+    console.log('in newGame');
+  }
+  alert('outside new game');
+  console.log('outside newGame');
+
+
+
+
+
+
+
+  </script>
+</body>
+</html>
